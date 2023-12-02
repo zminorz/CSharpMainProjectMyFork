@@ -11,7 +11,14 @@ public class EnterPoint : MonoBehaviour
     [SerializeField] private Canvas _targetCanvas;
     
     private RootController _rootController;
-    
+
+    // ֿנטגוע, חהוסü בûכ ÿ!
+
+    /*/
+     * ûףןשעמûרשןעג
+     * ûזהגמןûחגן
+    /*/
+
     void Start()
     {
         _settings.LoadUnits();
