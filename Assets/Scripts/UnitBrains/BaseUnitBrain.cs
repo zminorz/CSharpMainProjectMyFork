@@ -84,10 +84,18 @@ namespace UnitBrains
             }
 
             var sideStep0 = unit.Pos + new Vector2Int(stepDiff.y, -stepDiff.x);
+            var shiftedStep0 = unit.Pos + (sideStep0 + stepDiff).SignOrZero();
+            if (runtimeModel.IsTileWalkable(shiftedStep0))
+                return shiftedStep0;
+            
+            var sideStep1 = unit.Pos + new Vector2Int(-stepDiff.y, stepDiff.x);
+            var shiftedStep1 = unit.Pos + (sideStep1 + stepDiff).SignOrZero();
+            if (runtimeModel.IsTileWalkable(shiftedStep1))
+                return shiftedStep1;
+            
             if (runtimeModel.IsTileWalkable(sideStep0))
                 return sideStep0;
             
-            var sideStep1 = unit.Pos + new Vector2Int(-stepDiff.y, stepDiff.x);
             if (runtimeModel.IsTileWalkable(sideStep1))
                 return sideStep1;
             
