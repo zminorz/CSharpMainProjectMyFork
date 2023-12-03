@@ -103,7 +103,9 @@ namespace View
 
         private void UpdateUnit(IReadOnlyUnit unitModel, UnitView unitView)
         {
+            var prevPosition = unitView.transform.position;
             unitView.transform.position = ToWorldPosition(unitModel.Pos);
+            unitView.UpdateState(unitModel, prevPosition);
         }
 
         private void UpdateProjectile(IReadOnlyProjectile projModel, ProjectileView projView)
