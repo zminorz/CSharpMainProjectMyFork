@@ -67,12 +67,24 @@ namespace Utilities
             for (var x = 0; x < width; x++)
             {
                 result[x, 0] = true;
+                result[x, 1] = true;
+                result[x, 2] = true;
+                result[x, 3] = true;
+                result[x, height - 4] = true;
+                result[x, height - 3] = true;
+                result[x, height - 2] = true;
                 result[x, height - 1] = true;
             }
             
             for (var y = 0; y < height; y++)
             {
                 result[0, y] = true;
+                result[1, y] = true;
+                result[2, y] = true;
+                result[3, y] = true;
+                result[width - 4, y] = true;
+                result[width - 3, y] = true;
+                result[width - 2, y] = true;
                 result[width - 1, y] = true;
             }
             

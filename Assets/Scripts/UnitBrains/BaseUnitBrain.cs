@@ -69,15 +69,26 @@ namespace UnitBrains
             var stepDiff = diff.SignOrZero();
             var nextStep = unit.Pos + stepDiff;
 
-            if (!runtimeModel.RoMap[nextStep])
+            if (runtimeModel.IsTileWalkable(nextStep))
                 return nextStep;
 
+            if (stepDiff.sqrMagnitude > 1)
+            {
+                var partStep0 = unit.Pos + new Vector2Int(stepDiff.x, 0);
+                if (runtimeModel.IsTileWalkable(partStep0))
+                    return partStep0;
+                
+                var partStep1 = unit.Pos + new Vector2Int(0, stepDiff.y);
+                if (runtimeModel.IsTileWalkable(partStep1))
+                    return partStep1;
+            }
+
             var sideStep0 = unit.Pos + new Vector2Int(stepDiff.y, -stepDiff.x);
-            if (!runtimeModel.RoMap[sideStep0])
+            if (runtimeModel.IsTileWalkable(sideStep0))
                 return sideStep0;
             
             var sideStep1 = unit.Pos + new Vector2Int(-stepDiff.y, stepDiff.x);
-            if (!runtimeModel.RoMap[sideStep1])
+            if (runtimeModel.IsTileWalkable(sideStep1))
                 return sideStep1;
             
             return unit.Pos;

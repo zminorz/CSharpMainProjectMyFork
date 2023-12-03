@@ -3,6 +3,7 @@ using System.Linq;
 using Model.Runtime;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
+using UnityEngine;
 
 namespace Model
 {
@@ -43,11 +44,16 @@ namespace Model
         {
             new (), new ()
         };
-
-        public void SetMoneyForAll(int startMoney)
+        
+        public bool IsTileWalkable(Vector2Int pos)
         {
-            Money[PlayerId] = startMoney;
-            Money[BotPlayerId] = startMoney;
+            return !Map[pos] && AllUnits.All(u => u.Pos != pos);
+        }
+
+        public void SetMoneyForAll(int startMoneyPlayer, int startMoneyBot)
+        {
+            Money[PlayerId] = startMoneyPlayer;
+            Money[BotPlayerId] = startMoneyBot;
         }
 
         public void RemoveUnit(Unit hitUnit)

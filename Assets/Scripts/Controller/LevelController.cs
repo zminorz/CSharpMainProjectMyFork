@@ -53,6 +53,9 @@ namespace Controller
 
         public void OnPlayersUnitChosen(UnitConfig unitConfig)
         {
+            if (unitConfig.Cost > _runtimeModel.Money[RuntimeModel.PlayerId])
+                return;
+            
             SpawnUnit(RuntimeModel.PlayerId, unitConfig);
             TryStartSimulation();
         }
@@ -86,7 +89,9 @@ namespace Controller
         private void SetInitialMoney()
         {
             var startMoney = _settings.BaseLevelMoney + _runtimeModel.Level * _settings.LevelMoneyIncrement;
-            _runtimeModel.SetMoneyForAll(startMoney);
+            var botMoneyAdvantage = (_runtimeModel.Level + _settings.BotMoneyAdvantageLevelShift) *
+                                    _settings.BotMoneyAdvantagePerLevel;
+            _runtimeModel.SetMoneyForAll(startMoney, startMoney + botMoneyAdvantage);
         }
 
         private void OnLevelFinished(bool playerWon)

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Model.Runtime;
 using Model.Runtime.ReadOnly;
+using UnityEngine;
 
 namespace Model
 {
@@ -16,5 +17,7 @@ namespace Model
         public IEnumerable<IReadOnlyUnit> RoPlayerUnits { get; }
         public IEnumerable<IReadOnlyUnit> RoBotUnits { get; }
         public IReadOnlyList<IReadOnlyBase> RoBases { get; }
+
+        public bool IsTileWalkable(Vector2Int pos);
     }
 }

@@ -15,6 +15,8 @@ namespace Model.Config
         [SerializeField] private float _mapMaxDensity;
         [SerializeField] private int _baseLevelMoney;
         [SerializeField] private int _levelMoneyIncrement;
+        [SerializeField] private int _botMoneyAdvantagePerLevel;
+        [SerializeField] private int _botMoneyAdvantageLevelShift;
         [SerializeField] private int _mainBaseMaxHp;
 
         private readonly Dictionary<UnitConfig, UnitView> _enemyUnits = new();
@@ -30,6 +32,8 @@ namespace Model.Config
         public float MapMaxDensity => _mapMaxDensity;
         public int BaseLevelMoney => _baseLevelMoney;
         public int LevelMoneyIncrement => _levelMoneyIncrement;
+        public int BotMoneyAdvantagePerLevel => _botMoneyAdvantagePerLevel;
+        public int BotMoneyAdvantageLevelShift => _botMoneyAdvantageLevelShift;
         public int MainBaseMaxHp => _mainBaseMaxHp;
         
         public IReadOnlyDictionary<UnitConfig, UnitView> EnemyUnits => _enemyUnits;
