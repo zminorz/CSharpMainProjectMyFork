@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Model;
-using Model.Runtime;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
 using UnityEngine;
@@ -17,8 +17,42 @@ namespace UnitBrains
         protected Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
 
-        public abstract Vector2Int GetNextStep();
-        public abstract List<BaseProjectile> GetProjectiles();
+        public virtual Vector2Int GetNextStep()
+        {
+            if (HasTargetsInRange())
+                return unit.Pos;
+
+            var target = runtimeModel.RoMap.Bases[
+                IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+                
+            return CalcNextStepTowards(target);
+        }
+
+        public virtual List<BaseProjectile> GetProjectiles()
+        {
+            var shotTargets = 0;
+            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            List<BaseProjectile> result = new ();
+            foreach (var possibleTarget in GetPossibleTargets())
+            {
+                var diff = possibleTarget - unit.Pos;
+                if (diff.sqrMagnitude < attackRangeSqr)
+                {
+                    for (int i = 0; i < unit.Config.ShotsPerTarget; i++)
+                    {
+                        var projectile = BaseProjectile.Create(unit.Config.ProjectileType, unit, unit.Pos,
+                            possibleTarget, unit.Config.Damage);
+                        result.Add(projectile);
+                    }
+                    shotTargets++;
+                }
+                
+                if (shotTargets >= unit.Config.TargetsInVolley)
+                    break;
+            }
+
+            return result;
+        }
 
         public void SetUnit(Unit unit)
         {
@@ -71,6 +105,27 @@ namespace UnitBrains
             }
 
             return units;
+        }
+
+        protected bool HasTargetsInRange()
+        {
+            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            foreach (var possibleTarget in GetPossibleTargets())
+            {
+                var diff = possibleTarget - unit.Pos;
+                if (diff.sqrMagnitude < attackRangeSqr)
+                    return true;
+            }
+
+            return false;
+        }
+
+        protected virtual IEnumerable<Vector2Int> GetPossibleTargets()
+        {
+            return runtimeModel.RoUnits
+                .Where(u => u.Config.IsPlayerUnit != IsPlayerUnitBrain)
+                .Select(u => u.Pos)
+                .Append(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
         }
     }
 }

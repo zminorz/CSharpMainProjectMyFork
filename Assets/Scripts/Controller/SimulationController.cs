@@ -71,7 +71,8 @@ namespace Controller
 
         private void GameOver()
         {
-            _onLevelFinished?.Invoke(false);
+            var isPlayerAlive = _runtimeModel.Bases[RuntimeModel.PlayerId].Health > 0;
+            _onLevelFinished?.Invoke(isPlayerAlive);
         }
     }
 }
