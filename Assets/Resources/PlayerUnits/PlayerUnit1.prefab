@@ -10318,9 +10318,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e322a584d28f2a443a12d1d2385e2dd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isPlayerUnit: 1
+  _name: Sky Serpent
   _icon: {fileID: 21300000, guid: 2ada01d04785e904ead4bf50b5430bb7, type: 3}
   _cost: 30
   _maxHealth: 30
+  _moveDelay: 0.25
+  _attackDelay: 0.75
 --- !u!1 &5898980875654718684
 GameObject:
   m_ObjectHideFlags: 0

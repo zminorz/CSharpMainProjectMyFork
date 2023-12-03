@@ -14934,9 +14934,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e322a584d28f2a443a12d1d2385e2dd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isPlayerUnit: 0
+  _name: EnemyUnit3
   _icon: {fileID: 0}
   _cost: 300
   _maxHealth: 600
+  _moveDelay: 0.25
+  _attackDelay: 0.75
 --- !u!1 &3858759757731351241
 GameObject:
   m_ObjectHideFlags: 0

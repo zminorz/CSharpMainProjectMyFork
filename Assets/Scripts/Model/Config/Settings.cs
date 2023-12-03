@@ -19,6 +19,8 @@ namespace Model.Config
 
         private readonly Dictionary<UnitConfig, UnitView> _enemyUnits = new();
         private readonly Dictionary<UnitConfig, UnitView> _playerUnits = new();
+        private readonly Dictionary<string, ProjectileView> _projectiles = new();
+        private readonly List<TileView> _tilePrefabs = new();
 
         public const int PlayersCount = 2;
         
@@ -32,11 +34,15 @@ namespace Model.Config
         
         public IReadOnlyDictionary<UnitConfig, UnitView> EnemyUnits => _enemyUnits;
         public IReadOnlyDictionary<UnitConfig, UnitView> PlayerUnits => _playerUnits;
+        public IReadOnlyDictionary<string, ProjectileView> Projectiles => _projectiles;
+        public IReadOnlyList<TileView> TilePrefabs => _tilePrefabs;
 
-        public void LoadUnits()
+        public void LoadPrefabs()
         {
             LoadUnitInto(_enemyUnits, "EnemyUnits");
             LoadUnitInto(_playerUnits, "PlayerUnits");
+            LoadProjectiles();
+            _tilePrefabs.AddRange(Resources.LoadAll<TileView>("Tiles"));
         }
 
         public int GetCheapestEnemyUnitCost()
@@ -61,6 +67,14 @@ namespace Model.Config
                 }
                 
                 target.Add(unitConfig, view);
+            }
+        }
+
+        private void LoadProjectiles()
+        {
+            foreach (var projectilePrefab in Resources.LoadAll<ProjectileView>("Projectiles"))
+            {
+                _projectiles.Add(projectilePrefab.ProjTypeName, projectilePrefab);
             }
         }
     }

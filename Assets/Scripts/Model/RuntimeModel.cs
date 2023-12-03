@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Model.Runtime;
+using Model.Runtime.Projectiles;
+using Model.Runtime.ReadOnly;
 
 namespace Model
 {
@@ -14,6 +16,7 @@ namespace Model
 
         public IEnumerable<IReadOnlyUnit> RoUnits =>
             _playersUnits[PlayerId].Concat(_playersUnits[BotPlayerId]);
+        public IEnumerable<IReadOnlyProjectile> RoProjectiles => Projectiles;
         
         public IEnumerable<IReadOnlyUnit> RoPlayerUnits => _playersUnits[PlayerId];
         public IEnumerable<IReadOnlyUnit> RoBotUnits => _playersUnits[BotPlayerId];
@@ -23,7 +26,8 @@ namespace Model
         public GameStage Stage { get; set; } = GameStage.None;
         public int Level { get; set; }
         public IReadOnlyList<List<Unit>> PlayersUnits => _playersUnits;
-        public List<Projectile> Projectiles { get; } = new();
+        public IEnumerable<Unit> AllUnits => _playersUnits.SelectMany(l => l);
+        public List<BaseProjectile> Projectiles { get; } = new();
         public List<MainBase> Bases { get; } = new()
         {
             null, null
@@ -45,13 +49,29 @@ namespace Model
             Money[PlayerId] = startMoney;
             Money[BotPlayerId] = startMoney;
         }
+
+        public void RemoveUnit(Unit hitUnit)
+        {
+            foreach (var list in _playersUnits)
+            {
+                list.Remove(hitUnit);
+            }
+        }
+
+        public void Clear()
+        {
+            foreach (var list in _playersUnits)
+                list.Clear();
+            
+            Projectiles.Clear();
+        }
         
         public enum GameStage
         {
             None,
             ChooseUnit,
             Simulation,
-            Finished
+            Finished,
         }
     }
 }

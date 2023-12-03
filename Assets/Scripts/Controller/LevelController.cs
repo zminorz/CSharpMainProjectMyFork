@@ -17,27 +17,32 @@ namespace Controller
         private readonly RootView _rootView;
         private readonly Gameplay3dView _gameplayView;
         private readonly Settings _settings;
+        private readonly TimeUtil _timeUtil;
 
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
             _runtimeModel = runtimeModel;
             _rootController = rootController;
             _botController = new BotController(OnBotUnitChosen);
-            _simulationController = new(runtimeModel);
+            _simulationController = new(runtimeModel, OnLevelFinished);
             
             _rootView = ServiceLocator.Get<RootView>();
             _gameplayView = ServiceLocator.Get<Gameplay3dView>();
             _settings = ServiceLocator.Get<Settings>();
+            _timeUtil = ServiceLocator.Get<TimeUtil>();
         }
 
         public void StartLevel(int level)
         {
             ServiceLocator.RegisterAs(this, typeof(IPlayerUnitChoosingListener));
+            
+            _rootView.HideLevelFinished();
 
             Random.InitState(level);
             SetInitialMoney();
             var density = Random.Range(_settings.MapMinDensity, _settings.MapMaxDensity);
             var map = MapGenerator.Generate(_settings.MapWidth, _settings.MapHeight, density, level);
+            _runtimeModel.Clear();
             _runtimeModel.Map = new Map(map, Settings.PlayersCount);
             _runtimeModel.Stage = RuntimeModel.GameStage.ChooseUnit;
             _runtimeModel.Bases[RuntimeModel.PlayerId] = new MainBase(_settings.MainBaseMaxHp);
@@ -86,8 +91,9 @@ namespace Controller
 
         private void OnLevelFinished(bool playerWon)
         {
-            _rootController.OnLevelFinished(playerWon);
+            _runtimeModel.Stage = RuntimeModel.GameStage.Finished;
             _rootView.ShowLevelFinished(playerWon);
+            _timeUtil.RunDelayed(5f, () => _rootController.OnLevelFinished(playerWon));
         }
     }
 }
