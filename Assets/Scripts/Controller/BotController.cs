@@ -60,16 +60,15 @@ namespace Controller
             if (_sortedUnits[0].Cost > moneyLeft)
                 return;
 
-            var equalShare = moneyLeft / _sortedUnits.Count;
             for (int i = _sortedUnits.Count - 1; i >= 0; i--)
             {
-                var unitBudget = equalShare;
+                moneyLeft = _runtimeModel.RoMoney[RuntimeModel.BotPlayerId];
+                var unitBudget = moneyLeft / (i + 1);
                 var unit = _sortedUnits[i];
                 while (unit.Cost <= unitBudget && unit.Cost < moneyLeft)
                 {
                     _onBotUnitChosen?.Invoke(unit);
                     unitBudget -= unit.Cost;
-                    moneyLeft = _runtimeModel.RoMoney[RuntimeModel.BotPlayerId];
                 }
             }
         }

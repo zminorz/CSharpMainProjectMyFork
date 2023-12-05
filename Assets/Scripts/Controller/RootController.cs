@@ -17,8 +17,6 @@ namespace Controller
         public RootController(Settings settings, Canvas targetCanvas)
         {
             _persisted = PersistanceUtils.LoadSingleton(new PersistedModel());
-            ServiceLocator.Register(settings);
-            ServiceLocator.Register(this);
             ServiceLocator.Register(TimeUtil.Create());
             
             _runtimeModel = new();
