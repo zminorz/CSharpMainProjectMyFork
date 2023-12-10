@@ -24,7 +24,7 @@ namespace Model.Runtime.Projectiles
             Pos = Vector2.Lerp(StartPoint, _target, t);
             
             Height = 0f;
-            
+            var totalDistance = _totalDistance;
             ///////////////////////////////////////
             // Insert you code here
             ///////////////////////////////////////
