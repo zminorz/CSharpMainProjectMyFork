@@ -40,6 +40,8 @@ namespace View
 
             UpdateAllUnits();
             UpdateAllProjectiles();
+            
+            UpdateCamera();
         }
 
         private readonly List<IReadOnlyUnit> _unitBuffer = new();
@@ -111,6 +113,42 @@ namespace View
         private void UpdateProjectile(IReadOnlyProjectile projModel, ProjectileView projView)
         {
             projView.transform.position = ToWorldPosition(projModel.Pos, projModel.Height);
+        }
+
+        private void UpdateCamera()
+        {
+            if (!ServiceLocator.Contains<CameraPositioning>())
+                return;
+            
+            var cameraPositioning = ServiceLocator.Get<CameraPositioning>();
+
+            bool first = true;
+            Bounds allCameraObjectsBounds = default;
+            foreach (var obj in GetAllCameraObjects())
+            {
+                if (first)
+                {
+                    allCameraObjectsBounds = new Bounds(obj, Vector3.zero);
+                    first = false;
+                }
+                else
+                    allCameraObjectsBounds.Encapsulate(obj);
+            }
+
+            cameraPositioning.SetTarget(allCameraObjectsBounds);
+        }
+
+        private IEnumerable<Vector3> GetAllCameraObjects()
+        {
+            foreach (var baseTile in _runtimeModel.RoMap.Bases)
+            {
+                yield return ToWorldPosition(baseTile);
+            }
+
+            foreach (var unit in _units.Values)
+            {
+                yield return unit.transform.position;
+            }
         }
 
         private void CreateTiles()
