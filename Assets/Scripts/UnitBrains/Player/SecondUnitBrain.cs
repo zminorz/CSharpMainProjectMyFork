@@ -17,5 +17,17 @@ namespace UnitBrains.Player
             AddProjectileToList(projectile, intoList);
             ///////////////////////////////////////
         }
+
+        protected override List<Vector2Int> SelectTargets()
+        {
+            ///////////////////////////////////////
+            // Homework 1.4 (1st block, 4rd module)
+            ///////////////////////////////////////
+            var result = GetReachableTargets();
+            while (result.Count > 1)
+                result.RemoveAt(result.Count - 1);
+            return result;
+            ///////////////////////////////////////
+        }
     }
 }

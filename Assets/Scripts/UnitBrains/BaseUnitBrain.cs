@@ -70,18 +70,12 @@ namespace UnitBrains
             AddProjectileToList(CreateProjectile(forTarget), intoList);
         }
 
-        protected virtual IEnumerable<Vector2Int> SelectTargets()
+        protected virtual List<Vector2Int> SelectTargets()
         {
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
-            foreach (var possibleTarget in GetPossibleTargets())
-            {
-                var diff = possibleTarget - unit.Pos;
-                if (!(diff.sqrMagnitude < attackRangeSqr))
-                    continue;
-                
-                yield return possibleTarget;
-                yield break;
-            }
+            var result = GetReachableTargets();
+            while (result.Count > 1)
+                result.RemoveAt(result.Count - 1);
+            return result;
         }
         
         protected BaseProjectile CreateProjectile(Vector2Int target) =>
@@ -89,6 +83,9 @@ namespace UnitBrains
         
         protected void AddProjectileToList(BaseProjectile projectile, List<BaseProjectile> list) =>
             list.Add(projectile);
+
+        protected IReadOnlyUnit GetUnitAt(Vector2Int pos) =>
+            runtimeModel.RoUnits.FirstOrDefault(u => u.Pos == pos);
 
         protected Vector2Int CalcNextStepTowards(Vector2Int target)
         {
@@ -156,7 +153,7 @@ namespace UnitBrains
         protected bool HasTargetsInRange()
         {
             var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
-            foreach (var possibleTarget in GetPossibleTargets())
+            foreach (var possibleTarget in GetAllTargets())
             {
                 var diff = possibleTarget - unit.Pos;
                 if (diff.sqrMagnitude < attackRangeSqr)
@@ -166,12 +163,34 @@ namespace UnitBrains
             return false;
         }
 
-        protected virtual IEnumerable<Vector2Int> GetPossibleTargets()
+        protected IEnumerable<IReadOnlyUnit> GetAllEnemyUnits()
+        {
+            return runtimeModel.RoUnits
+                .Where(u => u.Config.IsPlayerUnit != IsPlayerUnitBrain);
+        }
+
+        protected IEnumerable<Vector2Int> GetAllTargets()
         {
             return runtimeModel.RoUnits
                 .Where(u => u.Config.IsPlayerUnit != IsPlayerUnitBrain)
                 .Select(u => u.Pos)
                 .Append(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
+        }
+
+        protected List<Vector2Int> GetReachableTargets()
+        {
+            var result = new List<Vector2Int>();
+            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            foreach (var possibleTarget in GetAllTargets())
+            {
+                var diff = possibleTarget - unit.Pos;
+                if (!(diff.sqrMagnitude < attackRangeSqr))
+                    continue;
+                
+                result.Add(possibleTarget);
+            }
+
+            return result;
         }
     }
 }
